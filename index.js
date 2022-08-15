@@ -148,7 +148,7 @@ module.exports = {
      * @returns {object}
      */
     getLibraryEntry: function(type, name) {
-        console.log("type:%s, name=%s",type, name);
+        //console.log("type:%s, name=%s",type, name);
         name = name == "" ? "/" : name.substring(0,1) != "/" ? "/" + name: name;
         return new Promise(function(resolve, reject) {
             connection.query("SELECT id, type, name, meta, body FROM node_red_libraries WHERE type = ? AND name = ?", [type, name], function(err, rows) {
@@ -184,6 +184,7 @@ module.exports = {
                             });
                             //console.log("dirs:",dirs);
                             //console.log("files:",files);
+                            dirs = Array.from(new Set(dirs));
                             dirs = dirs.concat(files);
                             //console.log("没有报错呀，dirs:",dirs);
                             resolve(dirs);
@@ -218,7 +219,7 @@ module.exports = {
                 } else if(rows.length > 0) {
                     // 更新
                     connection.query("UPDATE node_red_libraries SET type = ?, name = ?, meta = ?, body = ? WHERE name = ?", 
-                    [type, name, JSON.stringify(meta), JSON.stringify(body), name], function(err, rows) {
+                    [type, name, JSON.stringify(meta), body, name], function(err, rows) {
                         if (err) {
                             reject(err);
                         } else {
@@ -228,7 +229,7 @@ module.exports = {
                 }else {
                     // 插入
                     connection.query("INSERT INTO node_red_libraries (type, name, meta, body) VALUES (?, ?, ?, ?)", 
-                    [type, name, JSON.stringify(meta), JSON.stringify(body)], function(err, rows) {
+                    [type, name, JSON.stringify(meta), body], function(err, rows) {
                         if (err) {
                             reject(err);
                         } else {
